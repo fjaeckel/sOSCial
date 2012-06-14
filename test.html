@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="js/jquery.knob.js"></script>
+    <script>
+      $(function() {
+        function debug(string) {
+          var element = document.getElementById("debug");
+          var p = document.createElement("p");
+          p.appendChild(document.createTextNode(string));
+          element.appendChild(p);
+        }
+
+        var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
+        var ws = new Socket("ws://localhost:8080/");
+        ws.onopen = function() {
+          debug("connected...");
+        };
+        ws.onmessage = function(evt) {
+          debug("Message: " + evt.data); 
+        };
+
+        $('.knob').each(function(index, element){
+            console.log(element.id);
+            $(element).knob({
+                id: element.id || null,
+                change: function(val){
+                  console.log(val, this.id)            
+                  ws.send("/greeting/" + this.id + " " + val)
+                }
+            });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob1">
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob2">
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob3">
+    <div id="debug" />
+  </body>
+</html>
