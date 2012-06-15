@@ -19,10 +19,13 @@
         }
 
         var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
-        var ws = new Socket("ws://localhost:8080/");
+        var ws = new Socket("ws://84.88.38.77:8080/");
         var prev_val = 0;
         ws.onopen = function() {
           debug("connected...");
+        };
+        ws.onclose = function() {
+          debug("disconnected...");
         };
         ws.onmessage = function(evt) {
           var data = evt.data.split(' ');

@@ -6,8 +6,9 @@ require 'rubygems'
 require 'pp'
 
 get '/' do
-  erb :index,
-      :locals => {
-        :a => "b",
-      }
+  erb :index
+end
+
+get '/master' do
+  erb :master
 end
