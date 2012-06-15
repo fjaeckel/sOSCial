@@ -71,7 +71,7 @@
           range: "min",
           min: 0,
           max: 127,
-          value: 60,
+          value: 127,
           slide: function( element, ui ) {
             var value = $( "#" + element.target.id ).slider( "value" );
             sendToWebsocket(element.target.id, value);
