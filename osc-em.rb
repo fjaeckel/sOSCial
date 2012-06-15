@@ -33,13 +33,13 @@ EventMachine.run {
     }
 
     ws.onmessage { |msg|
-      puts "message from #{@sid}: #{msg}"
+      #puts "message from #{@sid}: #{msg}"
 
       # we need the data separately
       path,val = msg.split(" ")
 
       # send osc message
-      puts "sent #{path} #{val.to_i}"
+      #puts "sent #{path} #{val.to_i}"
       @client.send( OSC::Message.new( path , val.to_i ))
 
       # extract the element
@@ -47,7 +47,7 @@ EventMachine.run {
       if @elements[element] != val || element =~ /^button.*/
         @elements[element] = val
         @channel.push "#{element} #{val}"
-        puts "sent #{path} #{val} to #{@sid}"
+        #puts "sent #{path} #{val} to #{@sid}"
       end
     }
   end
