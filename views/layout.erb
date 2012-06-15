@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="/css/base2.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/css/jquery-ui-1.8.21.custom.css" type="text/css" media="all" />
+
+    <script src="js/jquery.knob.js"></script>
+
+    <script>
+      $(function() {
+        function debug(string) {
+          var element = document.getElementById("debug");
+          var p = document.createElement("p");
+          p.appendChild(document.createTextNode(string));
+          element.appendChild(p);
+        }
+
+        var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
+        var ws = new Socket("ws://localhost:8080/");
+        var prev_val = 0;
+        ws.onopen = function() {
+          debug("connected...");
+        };
+        ws.onmessage = function(evt) {
+          var data = evt.data.split(' ');
+          prev_val = $('#'+data[0]).val(); 
+          if($('#'+data[0]).val() != data[1]){
+            var patt = /^slider.*/
+            var patt2 = /^button.*/
+            if(patt.test(data[0]) == patt.test("slider")){
+              $('#'+data[0]).slider( "value" , data[1] );
+            }
+            else {
+              if(patt2.test(data[0]) != patt2.test("button")){
+                $('#'+data[0]).val(data[1]).trigger('change');
+              }
+            }
+          }
+        };
+
+        function sendToWebsocket(name, value){
+          ws.send("/greeting/" + name + " " + value);
+          console.log("sent: " + value + " name: " + name);            
+        }
+
+        $('.knob').each(function(index, element){
+            $(element).knob({
+                id: element.id || null,
+                change: function(val){
+                  if($('#'+this.id).val() != prev_val) {
+                    sendToWebsocket(this.id, val);
+                  }
+                }
+            });
+        });
+
+        $( "input:submit, a, button", ".demo" ).button().click(
+          function(element){
+            sendToWebsocket(element.target.id, "64");
+          }
+        );
+
+        $( ".slider" ).slider({
+          orientation: "vertical",
+          range: "min",
+          min: 0,
+          max: 127,
+          value: 60,
+          slide: function( element, ui ) {
+            var value = $( "#" + element.target.id ).slider( "value" );
+            sendToWebsocket(element.target.id, value);
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

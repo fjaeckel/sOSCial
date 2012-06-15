@@ -1,0 +1,21 @@
+    <div class="demo">
+      <% 8.times.each do |i| %>
+        <div id="<%= i %>">
+        <% 8.times.each do |j| %>
+          <input type="submit" value="&nbsp;" id="button<%= i %><%= j %>"/>
+        <% end %>
+        </div>
+      <% end %>
+    </div>
+    <br />
+    <p>
+    <div class="slider" id="slider1" style="height:200px;"></div>
+    <div class="slider" id="slider2" style="height:200px;"></div>
+    <div class="slider" id="slider3" style="height:200px;"></div>
+    <div class="slider" id="slider4" style="height:200px;"></div>
+    </p>
+    <br />
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob1">
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob2">
+    <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob3">
+    <div id="debug" />

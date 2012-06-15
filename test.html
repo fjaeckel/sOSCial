@@ -1,7 +1,13 @@
 <html>
   <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="css/base2.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/jquery-ui-1.8.21.custom.css" type="text/css" media="all" />
+
     <script src="js/jquery.knob.js"></script>
+
     <script>
       $(function() {
         function debug(string) {
@@ -13,11 +19,16 @@
 
         var Socket = "MozWebSocket" in window ? MozWebSocket : WebSocket;
         var ws = new Socket("ws://localhost:8080/");
+        var prev_val = 0;
         ws.onopen = function() {
           debug("connected...");
         };
         ws.onmessage = function(evt) {
-          debug("Message: " + evt.data); 
+          var data = evt.data.split(' ');
+          prev_val = $('#'+data[0]).val(); 
+          if($('#'+data[0]).val() != data[1]){
+            $('#'+data[0]).val(data[1]).trigger('change');
+          }
         };
 
         $('.knob').each(function(index, element){
@@ -25,15 +36,43 @@
             $(element).knob({
                 id: element.id || null,
                 change: function(val){
-                  console.log(val, this.id)            
-                  ws.send("/greeting/" + this.id + " " + val)
+                  if($('#'+this.id).val() != prev_val) {
+                    ws.send("/greeting/" + this.id + " " + val);
+                    console.log("sent: " + val + " ID: " + this.id);            
+                  }
                 }
             });
         });
+        $( "#check" ).button();
+        $( "#1" ).buttonset();
+        $( "#2" ).buttonset();
       });
     </script>
   </head>
   <body>
+<div class="demo">
+    <div id="1">
+      <input type="checkbox" id="check1" /><label for="check1">&nbsp;</label>
+      <input type="checkbox" id="check2" /><label for="check2">&nbsp;</label>
+      <input type="checkbox" id="check3" /><label for="check3">&nbsp;</label>
+      <input type="checkbox" id="check4" /><label for="check4">&nbsp;</label>
+      <input type="checkbox" id="check5" /><label for="check5">&nbsp;</label>
+      <input type="checkbox" id="check6" /><label for="check6">&nbsp;</label>
+      <input type="checkbox" id="check7" /><label for="check7">&nbsp;</label>
+      <input type="checkbox" id="check8" /><label for="check8">&nbsp;</label>
+    </div>
+    <div id="2">
+      <input type="checkbox" id="check1" /><label for="check1">&nbsp;</label>
+      <input type="checkbox" id="check2" /><label for="check2">&nbsp;</label>
+      <input type="checkbox" id="check3" /><label for="check3">&nbsp;</label>
+      <input type="checkbox" id="check4" /><label for="check4">&nbsp;</label>
+      <input type="checkbox" id="check5" /><label for="check5">&nbsp;</label>
+      <input type="checkbox" id="check6" /><label for="check6">&nbsp;</label>
+      <input type="checkbox" id="check7" /><label for="check7">&nbsp;</label>
+      <input type="checkbox" id="check8" /><label for="check8">&nbsp;</label>
+    </div>
+</div>
+    <br />
     <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob1">
     <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob2">
     <input class="knob" data-width="75" data-min="0" data-max="127" data-cursor=true value="0" id="knob3">
