@@ -7,6 +7,8 @@ require 'osc-ruby/em_server'
 
 require 'em-websocket'
 
+debug = ""
+
 @client = OSC::Client.new( 'localhost', 8000 )
 
 @elements = {};
@@ -33,13 +35,17 @@ EventMachine.run {
     }
 
     ws.onmessage { |msg|
-      #puts "message from #{@sid}: #{msg}"
+      if debug
+        puts "message from #{@sid}: #{msg}"
+      end
 
       # we need the data separately
       path,val = msg.split(" ")
 
       # send osc message
-      #puts "sent #{path} #{val.to_i}"
+      if debug 
+        puts "sent #{path} #{val.to_i}"
+      end
       @client.send( OSC::Message.new( path , val.to_i ))
 
       # extract the element
@@ -47,7 +53,9 @@ EventMachine.run {
       if @elements[element] != val || element =~ /^button.*/
         @elements[element] = val
         @channel.push "#{element} #{val}"
-        #puts "sent #{path} #{val} to #{@sid}"
+        if debug
+          puts "sent #{path} #{val} to #{@sid}"
+        end
       end
     }
   end
